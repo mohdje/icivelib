@@ -5,4 +5,6 @@ With this application the user can find Velib stations in Paris and its suburbs 
 
 The project is divided in two parts:
 * Xamarin : this is the framework I use to develop mobile applications. I use a home-made library XamarinCustomHelper (https://github.com/mohdje/xamarincustomhelper) that embeds common features we use when developing a mobile app (activity transition, data storage, etc). 
-* Vuetify : I used Vuetify to build the UI of the application. With the ease of Vue js to build modular and scalable interfaces and the "mobile native look" of Vuetify, it is a lot more easier to build UI for mobile than using xaml in Xamarin.  
+* Vuetify : I used Vuetify to build the UI of the application. With the ease of Vue js to build modular and scalable interfaces and the "mobile native look" of Vuetify, it is a lot more easier to build UI for mobile than using classic way in Xamarin.  
+
+I use WebView to load the UI and it can interacts with the phone throw Javascipt Interfaces. The development and maintenance of the application is a lot more efficient with this approach, especially when you want to build advanced UX which could be painful and hard to maintain using xaml and C#.
