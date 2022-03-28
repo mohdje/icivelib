@@ -5,6 +5,7 @@
     right
     temporary
     style="z-index: 20"
+    touchless
   >
     <div class="favorites-panel-container">
       <div class="favorites-panel-header">

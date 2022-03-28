@@ -4,6 +4,7 @@
     absolute
     temporary
     style="z-index: 20"
+    touchless
   >
     <div class="filter-panel-container">
       <div class="filter-panel-header">
