@@ -20,9 +20,7 @@ export const MapMarker = {
         return marker;
     },
     getVelibStationMarker(station) {
-        var htmlId = 'full' + station.id;
-
-        var html = '<div id="' + htmlId + '" class="velib-station-marker-container marker-visibility">';
+        var html = '<div class="velib-station-marker-container">';
         html += '      <div class="velib-station-marker-content">';
         html += '         <div class="velib-station-marker-label">' + station.name + '</div>';
        
@@ -47,7 +45,7 @@ export const MapMarker = {
         html += "</div>";
 
         var marker = {
-            id: htmlId,
+            id: 'full' + station.id,
             innerHTML: html.trim(),
             size: {
                 width: 160,
@@ -69,17 +67,15 @@ export const MapMarker = {
         else if (distance > 1000) return 'à ' + Number(distance / 1000).toFixed(2) + 'km';
         else return 'à ' + Number(distance).toFixed(0) + 'm';
     },
-    getVelibStationLiteMarker(station) {
-        var htmlId = 'lite' + station.id;
-
-        var html = '<div id="' + htmlId + '" class="velib-station-marker-container marker-visibility">';
+    getVelibStationLiteMarker(station) {      
+        var html = '<div class="velib-station-marker-container">';
         html += '      <div class="velib-station-marker-content lite" style="background-image: url(' + this.velibLogoMarkerImage + ');">';
         html += '       </div>';
         html += '       <div class="velib-station-marker-bottom"><div class="triangle"></div></div>';
         html += "</div>";
 
         var marker = {
-            id: htmlId,
+            id: 'lite' + station.id,
             innerHTML: html.trim(),
             size: {
                 width: 65,

@@ -70,6 +70,9 @@ export default {
       el.style.height = marker.size.height + "px";
 
       if (marker.innerHTML) el.innerHTML = marker.innerHTML;
+      if (marker.id) el.id = marker.id;
+
+      el.classList.add("marker-visibility");
 
       var self = this;
       el.onclick = function (e) {
@@ -91,26 +94,20 @@ export default {
       this.markersOnMap = [];
     },
     updateMarkersVisibility() {
+      var zoom = this.map.getZoom();
       this.customMarkers.forEach((marker) => {
         if (marker.id) {
           var htmlMarker = document.getElementById(marker.id);
-          if (this.isMarkerVisible(marker)){
-            htmlMarker.classList.remove("hidden");
-            htmlMarker.parentElement.style.visibility = "visible";
-          } 
-          else {
+          if (
+            (marker.maxZoom && marker.maxZoom < zoom) ||
+            (marker.minZoom && marker.minZoom > zoom)
+          ) {
             htmlMarker.classList.add("hidden");
-            htmlMarker.parentElement.style.visibility = "hidden";
+          } else {
+            htmlMarker.classList.remove("hidden");
           }
         }
       });
-    },
-    isMarkerVisible(marker) {
-      const zoom = this.map.getZoom();
-      return !(
-        (marker.maxZoom && marker.maxZoom < zoom) ||
-        (marker.minZoom && marker.minZoom > zoom)
-      );
     },
     setView(lngLat, zoom) {
       var currentZoom = this.map.getZoom();
@@ -150,5 +147,15 @@ export default {
 
 .mapbox-improve-map {
   display: none;
+}
+
+.marker-visibility{
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 1s;
+}
+.marker-visibility.hidden{
+  opacity: 0;
+  visibility: hidden;
 }
 </style>
