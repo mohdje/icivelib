@@ -1,0 +1,38 @@
+html,
+body {
+  overflow: hidden;
+  user-select: none;
+}
+
+/*to remove focus on button when clicked*/
+.v-btn:not(.v-btn--text):not(.v-btn--outlined):hover:before {
+  opacity: 0 !important;
+}
+
+.theme--dark.v-btn:hover::before {
+  opacity: 0 !important;
+}
+
+.v-btn:not(.v-btn--text):not(.v-btn--outlined):focus:before {
+  opacity: 0 !important;
+}
+/*to remove focus on v-switch when clicked*/
+.v-input--selection-controls__ripple:before {
+  opacity: 0 !important;
+}
+
+.v-dialog--fullscreen {
+  height: 100vh !important;
+}
+
+.activity-view-container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+}
+  
+.activity-view-content {
+    overflow: hidden;
+    flex-grow: 4000;
+}
