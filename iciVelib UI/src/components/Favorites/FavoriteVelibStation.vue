@@ -1,25 +1,23 @@
 <template>
   <v-list-item
     class="favorite"
-    @click="emitClick"
+    v-delay-click="emitClick"
     v-touch-start="handleTouchStart"
     v-touch-move="handleTouchMove"
     v-touch-end="handleTouchEnd"
   >
     <div
-      class="delete-favorite"
+      class="swipe-btn delete-favorite"
       :style="deletePanelStyle"
-      v-touch-start="handleTouchStart"
-      v-touch-move="handleTouchMove"
-      v-touch-end="handleTouchEnd"
-      @click.stop="emitDeleteClick"
     >
-      <div>Supprimer</div>
+      Supprimer
     </div>
-    <div class="edit-btn">
-      <v-btn color="#ffffff00" small fab elevation="0" @click.stop="emitEditCustomLabelClick">
-        <v-icon color="#3498db">mdi-pencil</v-icon>
-      </v-btn>
+
+    <div
+      class="swipe-btn modify-favorite"
+      :style="modifyPanelStyle"
+    >
+      Modifier
     </div>
 
     <v-list-item-content style="padding: 10px 0 0 0">
@@ -27,7 +25,7 @@
       <div class="name">{{ station.name }}</div>
       <div class="id">station n°{{ station.id }}</div>
       <div v-if="station.isAvailable" class="velib-infos-container">
-        <div  class="velib-info">
+        <div class="velib-info">
           <img :src="velibMecaLogo" />
           <div>{{ station.normalBikeCount }}</div>
         </div>
@@ -40,7 +38,7 @@
           <div>{{ station.freePlaceCount }}</div>
         </div>
       </div>
-       <div v-else class="not-available">
+      <div v-else class="not-available">
         <div>Indisponible</div>
         <v-icon color="orange" size="40px">mdi-alert</v-icon>
       </div>
@@ -60,9 +58,14 @@ export default {
       parkingLogo: require("@/assets/filter_map_terminal.png"),
       deletePanelStyle: {
         left: "100%",
-        width: "90px",
+        opacity: 0.1,
       },
-      touchEventStarted: false,
+      modifyPanelStyle: {
+        right: "100%",
+        opacity: 0.1,
+      },
+      swipeDeleteStarted: false,
+      swipeModifyStarted: false,
     };
   },
   methods: {
@@ -70,34 +73,40 @@ export default {
       this.$emit("click", this.station);
       this.deletePanelStyle.left = "100%";
     },
-    emitDeleteClick() {
-      this.$emit("deleteClick", this.station);
-      this.deletePanelStyle.left = "100%";
-    },
-    emitEditCustomLabelClick(){
-        this.$emit("editCustomLabelClick", this.station);
-    },
     handleTouchStart(event) {
       var touch = event.touches[0];
       var windowWidth = event.view.innerWidth;
-      this.touchEventStarted = touch.screenX > windowWidth * 0.7;
+      const LeftPourcentInElement = (touch.clientX - (windowWidth - this.$el.clientWidth)) / this.$el.clientWidth;
+      this.swipeDeleteStarted = LeftPourcentInElement > 0.8;
+      this.swipeModifyStarted = LeftPourcentInElement < 0.2;
     },
     handleTouchMove(event) {
       var touch = event.touches[0];
       var windowWidth = event.view.innerWidth;
-      if (this.touchEventStarted && touch.clientX > windowWidth * 0.7)
-        this.deletePanelStyle.left =
-          touch.clientX - (windowWidth - this.$el.clientWidth) + "px";
+      const XPosition = touch.clientX - (windowWidth - this.$el.clientWidth);
+      if (this.swipeDeleteStarted && XPosition > 0) {       
+        this.deletePanelStyle.left = XPosition + "px";
+        this.deletePanelStyle.opacity = 1 - XPosition / this.$el.clientWidth;
+      }
+      else if (this.swipeModifyStarted && XPosition < this.$el.clientWidth) {       
+        this.modifyPanelStyle.right = (this.$el.clientWidth - XPosition) + "px";
+        this.modifyPanelStyle.opacity = XPosition / this.$el.clientWidth;
+      }
     },
-    handleTouchEnd(event) {
-      this.touchEventStarted = false;
-      var deletePanelX = this.deletePanelStyle.left.replace("px", "");
-      if (deletePanelX < this.$el.clientWidth * 0.85)
-        this.deletePanelStyle.left =
-          this.$el.clientWidth -
-          this.deletePanelStyle.width.replace("px", "") +
-          "px";
-      else this.deletePanelStyle.left = "100%";
+    handleTouchEnd() {
+      this.swipeDeleteStarted = false;
+      if(this.deletePanelStyle.opacity > 0.9)
+        this.$emit("deleteClick", this.station);
+
+      this.deletePanelStyle.left = "100%";
+      this.deletePanelStyle.opacity = 0;
+
+      this.swipeModifyStarted = false;
+      if(this.modifyPanelStyle.opacity > 0.9)
+        this.$emit("editCustomLabelClick", this.station);
+
+      this.modifyPanelStyle.right = "100%";
+      this.modifyPanelStyle.opacity = 0;
     },
   },
 };
@@ -142,20 +151,25 @@ export default {
   height: auto;
 }
 
-.delete-favorite {
+.swipe-btn{
   position: absolute;
-  background-color: red;
-  color: white;
   top: 0;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  padding: 40px 10px;
   z-index: 3;
+  width: 100%;
 }
 
-.delete-favorite:active {
-  background-color: rgb(158, 14, 14);
+.swipe-btn.delete-favorite {
+  background-color: red;
+  color: white;
+  text-align: left;
+}
+
+.swipe-btn.modify-favorite {
+  background-color: #3498db;
+  color: white;
+  text-align: right;
 }
 
 .edit-btn {
