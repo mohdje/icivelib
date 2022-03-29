@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="showDialog" persistent width="fit-content" no-click-animation>
+  <v-dialog v-model="visible" persistent width="fit-content" no-click-animation>
     <v-card color="secondary">
       <div class="loading-window-container">
-        <div class="loading-view-label">{{ label }}</div>
+        <div class="loading-view-label">{{ text }}</div>
         <v-progress-circular            
           indeterminate
           color="white"
@@ -14,19 +14,20 @@
 <script>
 export default {
   name: "LoadingWindow",
-  props: {
-    isVisible: Boolean,
-    label: String,
-  },
   data() {
     return {
-      showDialog: false,
+      visible: false,
+      text: ""
     };
   },
-  watch:{
-      isVisible(visible){
-          this.showDialog = visible;         
-      }
+  methods:{
+    show(text){
+      this.text = text;
+      this.visible = true;
+    },
+    hide(){
+      this.visible = false;
+    }
   }
 };
 </script>

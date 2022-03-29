@@ -14,8 +14,7 @@
       :showFavoritesButton="hasFavoriteStations"
     />
     <ResearchResultLabel
-      :visible="resultLabel.visible"
-      :text="resultLabel.text"
+      ref="resultLabel"
     />
     <ResearchFilterPannel
       ref="filtersPannel"
@@ -26,9 +25,7 @@
       @favoriteClick="showStationOnMap"
     />
     <LoadingWindow
-      :isVisible="loadingWindow.visible"
-      :label="loadingWindow.label"
-      @windowClose="loadingWindow.visible = false"
+      ref="loadingWindow"
     />
     <VelibStationInfosWindow
       :station="selectedStation"
@@ -109,15 +106,7 @@ export default {
           },
         ],
       },
-      mapMarkers: [],
-      loadingWindow: {
-        visible: false,
-        label: "",
-      },
-      resultLabel: {
-        text: "",
-        visible: false,
-      },
+      mapMarkers: []
     };
   },
   methods: {
@@ -165,22 +154,10 @@ export default {
       this.mapMarkers = [MapMarker.getPositionMarker(lng, lat)];
     },
     showLoadingWindow(message) {
-      this.loadingWindow.label = message;
-      this.loadingWindow.visible = true;
+      this.$refs.loadingWindow.show(message);
     },
     hideLoadingWindow() {
-      this.loadingWindow.visible = false;
-    },
-    showResearchResultLabel(result) {
-      if (!result || result === 0)
-        this.resultLabel.text = "Aucune station Velib trouvée";
-      else this.resultLabel.text = result + " station(s) Velib trouvée(s)";
-
-      this.resultLabel.visible = true;
-      var self = this;
-      setTimeout(() => {
-        self.resultLabel.visible = false;
-      }, 4000);
+      this.$refs.loadingWindow.hide();
     },
     showFiltersPannel(){
       this.$refs.filtersPannel.show();
@@ -219,9 +196,7 @@ export default {
               );
             });
             window.context.researchView.hideLoadingWindow();
-            window.context.researchView.showResearchResultLabel(
-              stations.length
-            );
+            window.context.researchView.$refs.resultLabel.show(stations.length === 0 ? "Aucune station Velib trouvée":  stations.length + " station(s) Velib trouvée(s)");
           }
         );
       }, 1000);

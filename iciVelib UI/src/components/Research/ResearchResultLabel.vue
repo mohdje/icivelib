@@ -8,10 +8,22 @@
 <script>
 export default {
   name: "ResearchResultLabel",
-  props: {
-    text: String,
-    visible: Boolean
+  data(){
+    return {
+      text: "",
+      visible: false
+    }
   },
+  methods:{
+    show(text){
+      this.text = text;
+      this.visible = true;
+      const self = this;
+      setTimeout(()=>{
+        self.visible = false;
+      }, 4000);
+    }
+  }
 };
 </script>
 <style>
