@@ -158,6 +158,8 @@ export default {
   padding: 40px 10px;
   z-index: 3;
   width: 100%;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .swipe-btn.delete-favorite {
