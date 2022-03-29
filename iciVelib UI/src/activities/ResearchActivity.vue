@@ -6,7 +6,6 @@
         @click="location.reload()"
       />
       <ResearchView
-        :favoriteVelibStations="favoriteVelibStations"
         @networkUnavailable="handleNetworkUnavailable(false)"
       />
     </v-main>
@@ -17,7 +16,6 @@
 import ResearchView from "@/components/Research/ResearchView";
 import ReloadViewButton from "@/components/ReloadViewButton";
 import { PhoneInterface } from "@/js/phoneInterface";
-import { AsyncCallMobileInterface } from "@/js/asyncCallMobile";
 
 export default {
   name: "ResearchActivity",
@@ -25,18 +23,8 @@ export default {
     ResearchView,
     ReloadViewButton,
   },
-  computed: {
-    favoriteVelibStations() {
-      return AsyncCallMobileInterface.getAsyncCallResult(
-        PhoneInterface.getFavoriteVelibStationsCallId
-      );
-    },
-  },
-
   mounted() {
-    if (PhoneInterface.networkAvailable()) {
-      PhoneInterface.getFavoritesVelibStationsAsync();
-    } else this.handleNetworkUnavailable(true);
+    if (!PhoneInterface.networkAvailable()) this.handleNetworkUnavailable(true);
   },
 
   data: () => ({

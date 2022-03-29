@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="panelVisible"
+    v-model="visible"
     absolute
     right
     temporary
@@ -24,7 +24,7 @@
               small
               color="#646464"
               elevation="0"
-              @click="refreshClick"
+              @click="updateFavoriteStationsList"
             >
               <v-icon color="white">mdi-refresh</v-icon>
             </v-btn>
@@ -33,12 +33,12 @@
       </div>
       <div class="favorites-content">
         <v-progress-circular
-          v-if="!(favoritesStations && favoritesStations.length > 0)"
+          v-if="isLoading"
           indeterminate
           color="grey"
           class="loading-progress"
         ></v-progress-circular>
-        <v-list dense style="padding: 0">
+        <v-list v-else dense style="padding: 0">
           <FavoriteVelibStation
             v-for="station in favoritesStations"
             :key="station.id"
@@ -72,6 +72,8 @@
 import FavoriteVelibStation from "@/components/Favorites/FavoriteVelibStation";
 import YesNoDialog from "@/components/Dialogs/YesNoDialog";
 import InputTextDialog from "@/components/Dialogs/InputTextDialog";
+import { PhoneInterface } from "@/js/phoneInterface.js";
+import { FavoritesStationsStore } from "@/js/store.js";
 
 export default {
   components: {
@@ -79,26 +81,21 @@ export default {
     YesNoDialog,
     InputTextDialog,
   },
-  props: {
-    velibStations: Array,
-    isVisible: Boolean,
+  mounted() {
+    window.context.favoritesPannel = this;
+    window.context.phoneInterface = PhoneInterface;
   },
-  watch: {
-    isVisible(value) {
-      this.panelVisible = value;
+  computed: {
+    favoritesStations() {
+      return FavoritesStationsStore.stations;
     },
-    panelVisible(value) {
-      if (value) this.$emit("onOpen");
-      else this.$emit("onClose");
-    },
-    velibStations(value) {
-      this.favoritesStations = value;
+    isLoading(){
+      return FavoritesStationsStore.isLoading;
     }
   },
   data() {
     return {
-      panelVisible: false,
-      favoritesStations: [],
+      visible: false,
       yesNoDialog: {
         visible: false,
         onYesClick: () => {},
@@ -111,17 +108,21 @@ export default {
     };
   },
   methods: {
-    refreshClick() {
-      this.favoritesStations = [];
-      this.$emit("refreshClick");
+    show(){
+      this.visible = true;
+    },
+    hide(){
+      this.visible = false;
+    },
+    updateFavoriteStationsList() {
+      FavoritesStationsStore.load();
     },
     favoriteStationClick(station) {
-      this.panelVisible = false;
       this.$emit("favoriteClick", station);
     },
     askConfirmationToDeleteFavorite(station) {
       this.yesNoDialog.onYesClick = () => {
-        this.$emit("deleteFavoriteClick", station.id);
+        FavoritesStationsStore.delete(station.id);
         this.yesNoDialog.visible = false;
       };
       this.yesNoDialog.visible = true;
@@ -129,8 +130,7 @@ export default {
     editCustomLabelClick(station) {
       this.inputTextDialog.defaultTextInput = station.customLabel;
       this.inputTextDialog.onValidateClick = (text) => {
-        station.customLabel = text;
-        this.$emit("customLabelEdited", station);
+        FavoritesStationsStore.update(station.id, text);
         this.inputTextDialog.visible = false;
       };
       this.inputTextDialog.visible = true;

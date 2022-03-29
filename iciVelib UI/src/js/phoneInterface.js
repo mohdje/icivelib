@@ -1,31 +1,28 @@
 import { TestPhoneInterface } from "@/js/testPhoneInterface.js";
 
 const ProdPhoneInterface = { 
-    getFavoriteVelibStationsCallId: "GetFavoriteVelibStations",
-    
-    getVelibStationsFromPosition(lat, lon, dist, filterValues) {
-        return JSON.parse(Velib.GetVelibStationsFromPosition(lat, lon, dist, filterValues.join(';')));
+    getVelibStationsFromPositionAsync(lat, lon, dist, filterValues, callback) {
+        Velib.GetVelibStationsFromPosition(lat, lon, dist, filterValues.join(';'), callback.toString());
     },
 
-    getFavoritesVelibStationsAsync() {
-       Velib.GetFavoritesVelibStationsAsync(this.getFavoriteVelibStationsCallId);
+    getFavoritesVelibStationsAsync(callback) {
+       Velib.GetFavoritesVelibStationsAsync(callback.toString());
     },
 
-    addFavoriteVelibStationAsync(stationId, customLabel) {
-        Velib.AddFavoriteVelibStationAsync(stationId, customLabel, this.getFavoriteVelibStationsCallId);
+    addFavoriteVelibStationAsync(stationId, customLabel, callback) {
+        Velib.AddFavoriteVelibStationAsync(stationId, customLabel, callback.toString());
     },
 
-    removeFavoriteVelibStationAsync(stationId) {
-        Velib.RemoveFavoriteVelibStationAsync(stationId, this.getFavoriteVelibStationsCallId);
+    removeFavoriteVelibStationAsync(stationId, callback) {
+        Velib.RemoveFavoriteVelibStationAsync(stationId, callback.toString());
     },
 
-    updateFavoriteVelibStation(station){
-        Velib.UpdateFavoriteVelibStationCustomLabelAsync(station.id, station.customLabel , this.getFavoriteVelibStationsCallId);
+    updateFavoriteVelibStation(stationId, customLabel, callback){
+        Velib.UpdateFavoriteVelibStationCustomLabelAsync(stationId, customLabel , callback.toString());
     },
 
-    getGpsLocation() {
-        var location = Phone.GetGpsLocation();
-        return location ? JSON.parse(Phone.GetGpsLocation()) : null;
+    getGpsLocationAsync(callback) {
+        Phone.GetGpsLocation(callback.toString());
     },
 
     openGoogleMaps(lat, lon) {

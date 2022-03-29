@@ -7,31 +7,23 @@
       @customMarkerClick="onCustomMarkerClick"
     />
     <ResearchHeader
-      @filterClick="researchFilterPannelVisible = true"
+      @filterClick="showFiltersPannel"
       @locationSelected="onLocationSelected"
       @geolocationClick="onGeolocationClick"
-      @favoritesClick="favoritesPannelVisible = true"
-      :showFavoritesButton="
-        favoriteVelibStations && favoriteVelibStations.length > 0
-      "
+      @favoritesClick="showFavoritePannel"
+      :showFavoritesButton="hasFavoriteStations"
     />
     <ResearchResultLabel
       :visible="resultLabel.visible"
       :text="resultLabel.text"
     />
     <ResearchFilterPannel
-      :isVisible="researchFilterPannelVisible"
+      ref="filtersPannel"
       :filterValues="filterValues"
-      @onResearchFilterClose="researchFilterPannelVisible = false"
     />
     <FavoritesPannel
-      :velibStations="favoriteVelibStations"
-      :isVisible="favoritesPannelVisible"
-      @onClose="favoritesPannelVisible = false"
-      @refreshClick="updateFavoritesList"
+      ref="favoritesPannel"
       @favoriteClick="showStationOnMap"
-      @deleteFavoriteClick="deleteFavotiteVelibStation"
-      @customLabelEdited="updateFavoriteVelibStation"
     />
     <LoadingWindow
       :isVisible="loadingWindow.visible"
@@ -57,6 +49,7 @@ import VelibStationInfosWindow from "@/components/VelibStationInfosWindow/VelibS
 import FavoritesPannel from "@/components/Favorites/FavoritesPannel";
 import { MapMarker } from "@/js/mapMarker.js";
 import { PhoneInterface } from "@/js/phoneInterface.js";
+import { FavoritesStationsStore } from "@/js/store.js";
 
 export default {
   name: "ResearchView",
@@ -72,9 +65,21 @@ export default {
   props: {
     favoriteVelibStations: Array,
   },
+  mounted() {
+    window.context.researchView = this;
+    window.context.phoneInterface = PhoneInterface;
+    window.context.mapMarker = MapMarker;
+
+    FavoritesStationsStore.load();
+  },
   computed: {
     velibStationWindowsVisible() {
       return !!(this.selectedStation && this.selectedStation.id);
+    },
+    hasFavoriteStations() {
+      const hasStations = FavoritesStationsStore.hasStations();
+      if (!hasStations) this.hideFavoritePannel();
+      return hasStations;
     },
   },
   data() {
@@ -84,8 +89,6 @@ export default {
         zoom: 12,
       },
       selectedStation: {},
-      researchFilterPannelVisible: false,
-      favoritesPannelVisible: false,
       filterValues: {
         distanceMax: 3,
         shouldMatch: [
@@ -120,7 +123,7 @@ export default {
   methods: {
     onMapClick(position) {
       this.addPositionMarker(position.lng, position.lat);
-      this.searchVelibStations(position);
+      this.searchVelibStations(position.lng, position.lat);
     },
     onCustomMarkerClick(marker) {
       this.selectedStation = marker.data;
@@ -134,19 +137,25 @@ export default {
     },
     onLocationSelected(coordinates) {
       this.addPositionMarker(coordinates[0], coordinates[1]);
-      this.searchVelibStations({ lng: coordinates[0], lat: coordinates[1] });
+      this.searchVelibStations(coordinates[0], coordinates[1]);
     },
     onGeolocationClick() {
       this.showLoadingWindow("Acquisition de votre position en cours");
 
-      var self = this;
       setTimeout(() => {
-        var phoneLocation = PhoneInterface.getGpsLocation();
-        if (phoneLocation) {
-          self.addPositionMarker(phoneLocation.lng, phoneLocation.lat);
-          self.searchVelibStations(phoneLocation);
-        } else self.hideLoadingWindow();
-      }, 2000);
+        PhoneInterface.getGpsLocationAsync((e) => {
+          if (e.result) {
+            window.context.researchView.addPositionMarker(
+              e.result.lng,
+              e.result.lat
+            );
+            window.context.researchView.searchVelibStations(
+              e.result.lng,
+              e.result.lat
+            );
+          } else window.context.researchView.hideLoadingWindow();
+        });
+      }, 1000);
     },
     addPositionMarker(lng, lat) {
       this.viewPosition = {
@@ -155,7 +164,6 @@ export default {
       };
       this.mapMarkers = [MapMarker.getPositionMarker(lng, lat)];
     },
-
     showLoadingWindow(message) {
       this.loadingWindow.label = message;
       this.loadingWindow.visible = true;
@@ -174,12 +182,15 @@ export default {
         self.resultLabel.visible = false;
       }, 4000);
     },
+    showFiltersPannel(){
+      this.$refs.filtersPannel.show();
+    },
     getFilterValues() {
       return this.filterValues.shouldMatch
         .filter((s) => s.value)
         .map((f) => f.name);
     },
-    searchVelibStations(position) {
+    searchVelibStations(lng, lat) {
       if (!PhoneInterface.networkAvailable()) {
         this.hideLoadingWindow();
         this.$emit("networkUnavailable");
@@ -191,33 +202,33 @@ export default {
         "Recherche de stations Velib autour de cette position..."
       );
 
-      var self = this;
       setTimeout(() => {
-        var stations = PhoneInterface.getVelibStationsFromPosition(
-          position.lat,
-          position.lng,
+        window.context.phoneInterface.getVelibStationsFromPositionAsync(
+          lat,
+          lng,
           this.filterValues.distanceMax * 1000,
-          this.getFilterValues()
+          this.getFilterValues(),
+          (e) => {
+            const stations = e.result ? e.result : [];
+            stations.forEach((station) => {
+              window.context.researchView.mapMarkers.push(
+                window.context.mapMarker.getVelibStationMarker(station)
+              );
+              window.context.researchView.mapMarkers.push(
+                window.context.mapMarker.getVelibStationLiteMarker(station)
+              );
+            });
+            window.context.researchView.hideLoadingWindow();
+            window.context.researchView.showResearchResultLabel(
+              stations.length
+            );
+          }
         );
-        stations.forEach((station) => {
-          self.mapMarkers.push(MapMarker.getVelibStationMarker(station));
-          self.mapMarkers.push(MapMarker.getVelibStationLiteMarker(station));
-        });
-
-        self.hideLoadingWindow();
-        self.showResearchResultLabel(stations.length);
-      }, 2000);
+      }, 1000);
     },
     onVelibStationsWindowCloseClick() {
       this.selectedStation = {};
       MapMarker.unselectMarkers(this.mapMarkers);
-    },
-    updateFavoritesList() {
-      if (!PhoneInterface.networkAvailable()) {
-        this.$emit("networkUnavailable");
-        return;
-      }
-      PhoneInterface.getFavoritesVelibStationsAsync();
     },
     showStationOnMap(station) {
       this.mapMarkers = [];
@@ -225,28 +236,34 @@ export default {
       this.mapMarkers.push(MapMarker.getVelibStationLiteMarker(station));
       this.selectedStation = station;
 
-      const self = this;
       setTimeout(() => {
-        const selectedStationMarker = self.mapMarkers[0];
-        self.viewPosition = {
-          lngLat: [selectedStationMarker.coordinates.lng, selectedStationMarker.coordinates.lat],
+        const selectedStationMarker = window.context.researchView.mapMarkers[0];
+        window.context.researchView.viewPosition = {
+          lngLat: [
+            selectedStationMarker.coordinates.lng,
+            selectedStationMarker.coordinates.lat,
+          ],
           zoom: 16,
         };
-        MapMarker.selectMarker(selectedStationMarker);
+        window.context.mapMarker.selectMarker(selectedStationMarker);
       }, 200);
+      this.hideFavoritePannel();
     },
-    addSelectedStationToFavorites(customLabel){
-      PhoneInterface.addFavoriteVelibStationAsync(this.selectedStation.id, customLabel);
+    addSelectedStationToFavorites(customLabel) {
+      FavoritesStationsStore.add(this.selectedStation.id, customLabel);
     },
-    deleteFavotiteVelibStation(stationId){
-      PhoneInterface.removeFavoriteVelibStationAsync(stationId);
+    showFavoritePannel() {
+      if (this.$refs.favoritesPannel) this.$refs.favoritesPannel.show();
     },
-    updateFavoriteVelibStation(station){
-      PhoneInterface.updateFavoriteVelibStation(station);
+    hideFavoritePannel() {
+      if (this.$refs.favoritesPannel) this.$refs.favoritesPannel.hide();
     },
-    goToSelectedVelibStation(){
-      PhoneInterface.openGoogleMaps(this.selectedStation.latitude, this.selectedStation.longitude);
-    }
+    goToSelectedVelibStation() {
+      PhoneInterface.openGoogleMaps(
+        this.selectedStation.latitude,
+        this.selectedStation.longitude
+      );
+    },
   },
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer
-    v-model="panelVisible"
+    v-model="visible"
     absolute
     temporary
     style="z-index: 20"
@@ -74,22 +74,12 @@
 export default {
   name: "ResearchFilter",
   props: {
-    isVisible: Boolean,
     filterValues: Object,
   },
   data() {
     return {
-      panelVisible: false
+      visible: false
     };
-  },
-  watch: {
-    isVisible(value) {
-      this.panelVisible = value;
-    },
-    panelVisible(value) {
-      if (value) this.$emit("onResearchFilterOpen");
-      else this.$emit("onResearchFilterClose");
-    },
   },
   computed: {
     distanceMaxLabel() {
@@ -97,6 +87,14 @@ export default {
         return this.filterValues.distanceMax * 1000 + " m";
       else return this.filterValues.distanceMax + " km";
     },
+  },
+  methods:{
+    show(){
+      this.visible = true;
+    },
+    hide(){
+      this.visible = false;
+    }
   }
 };
 </script>

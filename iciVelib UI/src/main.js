@@ -4,7 +4,9 @@ import vuetify from './plugins/vuetify';
 import { AsyncCallMobileInterface } from "@/js/asyncCallMobile";
 import { vueDirectives } from "@/js/directives";
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
+
+window.context = {};
 
 vueDirectives.import();
 

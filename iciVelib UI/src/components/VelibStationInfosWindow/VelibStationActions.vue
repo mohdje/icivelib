@@ -32,7 +32,6 @@
 <script>
 import YesNoDialog from "@/components/Dialogs/YesNoDialog";
 import InputTextDialog from "@/components/Dialogs/InputTextDialog";
-import { ObjectAccessor } from "@/js/objectAccessor.js";
 
 export default {
   components: {
@@ -40,7 +39,7 @@ export default {
     InputTextDialog
   },
   mounted() {
-    ObjectAccessor.add("VelibStationComponent", this);
+    window.context.velibStationActions = this;
   },
   data: () => ({
     yesNoDialog: {
@@ -65,8 +64,7 @@ export default {
         color: "secondary",
         label: " Y aller",
         onClick() {
-          var thisVueComponent = ObjectAccessor.get("VelibStationComponent");
-          thisVueComponent.raiseGoToClick();
+          window.context.velibStationActions.raiseGoToClick();
         },
       },
       {
@@ -74,21 +72,20 @@ export default {
         color: "red",
         label: "Favoris",
         onClick() {          
-          var thisVueComponent = ObjectAccessor.get("VelibStationComponent");
-          thisVueComponent.showYesNoDialog(
+          window.context.velibStationActions.showYesNoDialog(
             "Favoris",
             "Voulez-vous enregistrer cette station Velib dans vos favoris ?",
              () => {
-              thisVueComponent.closeYesNoDialog();
-              thisVueComponent.showInputVelibStationLabelDialog(
+              window.context.velibStationActions.closeYesNoDialog();
+              window.context.velibStationActions.showInputVelibStationLabelDialog(
                 "Favoris", 
                 "Vous pouvez ajouter un label personnalisé pour reconnaître plus facilement votre station",
-                (inputText) => {thisVueComponent.raiseAddToFavClick(inputText); thisVueComponent.closeInputVelibStationLabelDialog(); },
-                () => { thisVueComponent.closeInputVelibStationLabelDialog();}
+                (inputText) => {window.context.velibStationActions.raiseAddToFavClick(inputText); window.context.velibStationActions.closeInputVelibStationLabelDialog(); },
+                () => { window.context.velibStationActions.closeInputVelibStationLabelDialog();}
                 );             
             },
              () => {
-              thisVueComponent.closeYesNoDialog();
+              window.context.velibStationActions.closeYesNoDialog();
             }
           );
         },
