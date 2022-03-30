@@ -36,21 +36,24 @@ namespace IciVelib.JavasciptInterfaces
 
         [Export]
         [JavascriptInterface]
-        public string GetVelibStationsFromPosition(string latitude, string longitude, string distance, string filterValues)
+        public void GetVelibStationsFromPositionAsync(string latitude, string longitude, string distance, string filterValues, string callback)
         {
-            return velibRequester.GetStations(longitude, latitude, distance, filterValues);
+            AsyncCall.ExecuteAsync(this.Context, () =>
+            {
+                return velibRequester.GetStations(longitude, latitude, distance, filterValues);
+            }, callback);
         }
 
         [Export]
         [JavascriptInterface]
-        public void GetFavoritesVelibStationsAsync(string asyncCallId)
+        public void GetFavoritesVelibStationsAsync(string callback)
         {
-            AsyncCall.ExecuteAsync(Context, GetFavoriteVelibStationsInfos, asyncCallId);
+            AsyncCall.ExecuteAsync(Context, () => GetFavoriteVelibStationsInfos(false), callback);
         }
 
         [Export]
         [JavascriptInterface]
-        public void AddFavoriteVelibStationAsync(string id, string customLabel, string asyncCallId)
+        public void AddFavoriteVelibStationAsync(string id, string customLabel, string callback)
         {
             AsyncCall.ExecuteAsync(Context, () =>
             {
@@ -70,14 +73,14 @@ namespace IciVelib.JavasciptInterfaces
                     Context.RunOnUiThread(() => jSIPhone.ShowToastMessage(ex.Message));
                 }
 
-                return GetFavoriteVelibStationsInfos();
+                return GetFavoriteVelibStationsInfos(true);
 
-            }, asyncCallId);
+            }, callback);
         }
 
         [Export]
         [JavascriptInterface]
-        public void UpdateFavoriteVelibStationCustomLabelAsync(string id, string customLabel, string asyncCallId)
+        public void UpdateFavoriteVelibStationCustomLabelAsync(string id, string customLabel, string callback)
         {
             AsyncCall.ExecuteAsync(Context, () =>
             {
@@ -96,9 +99,9 @@ namespace IciVelib.JavasciptInterfaces
                     Context.RunOnUiThread(() => jSIPhone.ShowToastMessage(ex.Message));
                 }
 
-                return GetFavoriteVelibStationsInfos();
+                return GetFavoriteVelibStationsInfos(true);
 
-            }, asyncCallId);
+            }, callback);
         }
 
         [Export]
@@ -122,21 +125,31 @@ namespace IciVelib.JavasciptInterfaces
                     Context.RunOnUiThread(() => jSIPhone.ShowToastMessage(ex.Message));
                 }
 
-                return GetFavoriteVelibStationsInfos();
+                return GetFavoriteVelibStationsInfos(true);
             }, asyncCallId);
         }
 
-        private string GetFavoriteVelibStationsInfos()
+        private VelibStation[] GetFavoriteVelibStationsInfos(bool fromCache)
         {
             var favStationsWithData = new List<VelibStation>();
             var velibDataTasks = new List<Task<VelibStation>>();
 
-            foreach (var station in velibFavStationList.GetElements())
-                velibDataTasks.Add(velibRequester.GetStationInfos(station.Id, station.CustomLabel));
+            foreach (var station in velibFavStationList.Elements)
+            {
+                velibDataTasks.Add(new Task<VelibStation>(() =>
+                {
+                    var velibStation = velibRequester.GetStationInfos(station.Id, fromCache).Result;
+                    velibStation.CustomLabel = station.CustomLabel;
+                    return velibStation;
+                }));
+            }
+
+            foreach (var task in velibDataTasks)
+                task.Start();
 
             Task.WhenAll(velibDataTasks).ContinueWith(t => favStationsWithData.AddRange(t.Result)).Wait();
 
-            return JsonHelper.ToJson(favStationsWithData);
+            return favStationsWithData.ToArray();
         }
     }
 }

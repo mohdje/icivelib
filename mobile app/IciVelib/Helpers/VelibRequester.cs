@@ -19,22 +19,46 @@ namespace IciVelib.Helpers
     {
         private const string _baseUrl = "https://opendata.paris.fr/api/records/1.0/search/?dataset=velib-disponibilite-en-temps-reel&q=&";
 
-        public async Task<VelibStation> GetStationInfos(string stationId, string customLabel)
+        private Dictionary<string, VelibStation> cache;
+
+        public VelibRequester()
+        {
+            cache = new Dictionary<string, VelibStation>();
+        }
+        public async Task<VelibStation> GetStationInfos(string stationId, bool fromCache = false)
         {
             var url = _baseUrl + "refine.stationcode=" + stationId;
 
+            if (fromCache)
+            {
+                if (cache.ContainsKey(stationId))
+                    return cache[stationId];
+            }
+
             var result = await PerformGetRequestAsync(url);
 
-            var resultObject = JsonHelper.ToObject<VelibApiResult>(result);
-            var record = resultObject.Records.FirstOrDefault();
-
-            return new VelibStation(record.Fields)
+            if (!string.IsNullOrEmpty(result))
             {
-                CustomLabel = customLabel
-            };
+                var resultObject = JsonHelper.ToObject<VelibApiResult>(result);
+                var record = resultObject?.Records.FirstOrDefault();
+
+                if (record != null)
+                {
+                    var velibStation = new VelibStation(record.Fields);
+
+                    if (!cache.ContainsKey(velibStation.Id))
+                        cache.Add(velibStation.Id, velibStation);
+                    else
+                        cache[velibStation.Id] = velibStation;
+
+                    return velibStation;
+                }
+            }
+
+            return null;
         }
 
-        public string GetStations(string longitude, string latitude, string distance, string filterValues)
+        public VelibStation[] GetStations(string longitude, string latitude, string distance, string filterValues)
         {
             var url = _baseUrl + $"geofilter.distance={latitude}%2C+{longitude}%2C+{distance}";
 
@@ -53,7 +77,7 @@ namespace IciVelib.Helpers
             if (filterValues.Contains("free_parking"))
                 velibStations = velibStations.Where(v => v.FreePlaceCount > 0);
 
-            return JsonHelper.ToJson(velibStations.ToArray());
+            return velibStations.ToArray();
         }
 
         private Task<string> PerformGetRequestAsync(string url)

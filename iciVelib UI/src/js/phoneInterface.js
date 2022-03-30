@@ -2,7 +2,7 @@ import { TestPhoneInterface } from "@/js/testPhoneInterface.js";
 
 const ProdPhoneInterface = { 
     getVelibStationsFromPositionAsync(lat, lon, dist, filterValues, callback) {
-        Velib.GetVelibStationsFromPosition(lat, lon, dist, filterValues.join(';'), callback.toString());
+        Velib.GetVelibStationsFromPositionAsync(lat, lon, dist, filterValues.join(';'), callback.toString());
     },
 
     getFavoritesVelibStationsAsync(callback) {
@@ -17,7 +17,7 @@ const ProdPhoneInterface = {
         Velib.RemoveFavoriteVelibStationAsync(stationId, callback.toString());
     },
 
-    updateFavoriteVelibStation(stationId, customLabel, callback){
+    updateFavoriteVelibStationAsync(stationId, customLabel, callback){
         Velib.UpdateFavoriteVelibStationCustomLabelAsync(stationId, customLabel , callback.toString());
     },
 
