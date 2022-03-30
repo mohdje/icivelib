@@ -84,11 +84,11 @@ export default {
       var touch = event.touches[0];
       var windowWidth = event.view.innerWidth;
       const XPosition = touch.clientX - (windowWidth - this.$el.clientWidth);
-      if (this.swipeDeleteStarted && XPosition > 0) {       
+      if (this.swipeDeleteStarted && XPosition >= 0) {       
         this.deletePanelStyle.left = XPosition + "px";
         this.deletePanelStyle.opacity = 1 - XPosition / this.$el.clientWidth;
       }
-      else if (this.swipeModifyStarted && XPosition < this.$el.clientWidth) {       
+      else if (this.swipeModifyStarted && XPosition <= this.$el.clientWidth) {       
         this.modifyPanelStyle.right = (this.$el.clientWidth - XPosition) + "px";
         this.modifyPanelStyle.opacity = XPosition / this.$el.clientWidth;
       }
