@@ -44,9 +44,6 @@ import LoadingWindow from "@/components/Research/LoadingWindow";
 import ResearchResultLabel from "@/components/Research/ResearchResultLabel";
 import VelibStationInfosWindow from "@/components/VelibStationInfosWindow/VelibStationInfosWindow";
 import FavoritesPannel from "@/components/Favorites/FavoritesPannel";
-import { MapMarker } from "@/js/mapMarker.js";
-import { PhoneInterface } from "@/js/phoneInterface.js";
-import { FavoritesStationsStore } from "@/js/store.js";
 
 export default {
   name: "ResearchView",
@@ -64,17 +61,15 @@ export default {
   },
   mounted() {
     window.context.researchView = this;
-    window.context.phoneInterface = PhoneInterface;
-    window.context.mapMarker = MapMarker;
 
-    FavoritesStationsStore.load();
+    window.context.favoriteStationStore.load();
   },
   computed: {
     velibStationWindowsVisible() {
       return !!(this.selectedStation && this.selectedStation.id);
     },
     hasFavoriteStations() {
-      const hasStations = FavoritesStationsStore.hasStations();
+      const hasStations = window.context.favoriteStationStore.hasStations();
       if (!hasStations) this.hideFavoritePannel();
       return hasStations;
     },
@@ -116,8 +111,8 @@ export default {
     },
     onCustomMarkerClick(marker) {
       this.selectedStation = marker.data;
-      MapMarker.unselectMarkers(this.mapMarkers);
-      MapMarker.selectMarker(marker);
+      window.context.mapMarker.unselectMarkers(this.mapMarkers);
+      window.context.mapMarker.selectMarker(marker);
       this.viewPosition = {
         lngLat: [marker.coordinates.lng, marker.coordinates.lat],
         zoom:
@@ -132,7 +127,7 @@ export default {
       this.showLoadingWindow("Acquisition de votre position en cours");
 
       setTimeout(() => {
-        PhoneInterface.getGpsLocationAsync((e) => {
+        window.context.phoneInterface.getGpsLocationAsync((e) => {
           if (e.result) {
             window.context.researchView.addPositionMarker(
               e.result.lng,
@@ -151,7 +146,7 @@ export default {
         lngLat: [lng, lat],
         zoom: 14,
       };
-      this.mapMarkers = [MapMarker.getPositionMarker(lng, lat)];
+      this.mapMarkers = [window.context.mapMarker.getPositionMarker(lng, lat)];
     },
     showLoadingWindow(message) {
       this.$refs.loadingWindow.show(message);
@@ -168,7 +163,7 @@ export default {
         .map((f) => f.name);
     },
     searchVelibStations(lng, lat) {
-      if (!PhoneInterface.networkAvailable()) {
+      if (!window.context.phoneInterface.networkAvailable()) {
         this.hideLoadingWindow();
         this.$emit("networkUnavailable");
         return;
@@ -203,12 +198,12 @@ export default {
     },
     onVelibStationsWindowCloseClick() {
       this.selectedStation = {};
-      MapMarker.unselectMarkers(this.mapMarkers);
+      window.context.mapMarker.unselectMarkers(this.mapMarkers);
     },
     showStationOnMap(station) {
       this.mapMarkers = [];
-      this.mapMarkers.push(MapMarker.getVelibStationMarker(station));
-      this.mapMarkers.push(MapMarker.getVelibStationLiteMarker(station));
+      this.mapMarkers.push(window.context.mapMarker.getVelibStationMarker(station));
+      this.mapMarkers.push(window.context.mapMarker.getVelibStationLiteMarker(station));
       this.selectedStation = station;
 
       setTimeout(() => {
@@ -225,7 +220,7 @@ export default {
       this.hideFavoritePannel();
     },
     addSelectedStationToFavorites(customLabel) {
-      FavoritesStationsStore.add(this.selectedStation.id, customLabel);
+      window.context.favoriteStationStore.add(this.selectedStation.id, customLabel);
     },
     showFavoritePannel() {
       if (this.$refs.favoritesPannel) this.$refs.favoritesPannel.show();
@@ -234,7 +229,7 @@ export default {
       if (this.$refs.favoritesPannel) this.$refs.favoritesPannel.hide();
     },
     goToSelectedVelibStation() {
-      PhoneInterface.openGoogleMaps(
+      window.context.phoneInterface.openGoogleMaps(
         this.selectedStation.latitude,
         this.selectedStation.longitude
       );

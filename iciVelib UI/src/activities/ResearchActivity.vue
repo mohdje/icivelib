@@ -15,7 +15,6 @@
 <script>
 import ResearchView from "@/components/Research/ResearchView";
 import ReloadViewButton from "@/components/ReloadViewButton";
-import { PhoneInterface } from "@/js/phoneInterface";
 
 export default {
   name: "ResearchActivity",
@@ -24,7 +23,7 @@ export default {
     ReloadViewButton,
   },
   mounted() {
-    if (!PhoneInterface.networkAvailable()) this.handleNetworkUnavailable(true);
+    if (!window.context.phoneInterface.networkAvailable()) this.handleNetworkUnavailable(true);
   },
 
   data: () => ({
@@ -33,7 +32,7 @@ export default {
   methods: {
     handleNetworkUnavailable(showReloadButton) {
       this.reloadViewButtonVisible = showReloadButton;
-      PhoneInterface.showToastMessage("Vérifiez votre connexion internet");
+      window.context.phoneInterface.showToastMessage("Vérifiez votre connexion internet");
     },
   },
 };

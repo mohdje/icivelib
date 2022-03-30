@@ -72,8 +72,6 @@
 import FavoriteVelibStation from "@/components/Favorites/FavoriteVelibStation";
 import YesNoDialog from "@/components/Dialogs/YesNoDialog";
 import InputTextDialog from "@/components/Dialogs/InputTextDialog";
-import { PhoneInterface } from "@/js/phoneInterface.js";
-import { FavoritesStationsStore } from "@/js/store.js";
 
 export default {
   components: {
@@ -83,14 +81,13 @@ export default {
   },
   mounted() {
     window.context.favoritesPannel = this;
-    window.context.phoneInterface = PhoneInterface;
   },
   computed: {
     favoritesStations() {
-      return FavoritesStationsStore.stations;
+      return window.context.favoriteStationStore.stations;
     },
     isLoading(){
-      return FavoritesStationsStore.isLoading;
+      return window.context.favoriteStationStore.isLoading;
     }
   },
   data() {
@@ -115,14 +112,14 @@ export default {
       this.visible = false;
     },
     updateFavoriteStationsList() {
-      FavoritesStationsStore.load();
+      window.context.favoriteStationStore.load();
     },
     favoriteStationClick(station) {
       this.$emit("favoriteClick", station);
     },
     askConfirmationToDeleteFavorite(station) {
       this.yesNoDialog.onYesClick = () => {
-        FavoritesStationsStore.delete(station.id);
+        window.context.favoriteStationStore.delete(station.id);
         this.yesNoDialog.visible = false;
       };
       this.yesNoDialog.visible = true;
@@ -130,7 +127,7 @@ export default {
     editCustomLabelClick(station) {
       this.inputTextDialog.defaultTextInput = station.customLabel;
       this.inputTextDialog.onValidateClick = (text) => {
-        FavoritesStationsStore.update(station.id, text);
+        window.context.favoriteStationStore.update(station.id, text);
         this.inputTextDialog.visible = false;
       };
       this.inputTextDialog.visible = true;
