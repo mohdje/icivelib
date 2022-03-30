@@ -22,7 +22,7 @@ const ProdPhoneInterface = {
     },
 
     getGpsLocationAsync(callback) {
-        Phone.GetGpsLocation(callback.toString());
+        Phone.GetGpsLocationAsync(callback.toString());
     },
 
     openGoogleMaps(lat, lon) {

@@ -325,8 +325,10 @@ export const FakeData = {
     },
     getPhoneLocation() {
         return {
-            lat: 48.8534,
-            lng: 2.3488
+            location: {
+                latitude: 48.8534,
+                longitude: 2.3488
+            }
         };
     },
     getVelibStationDtos() {

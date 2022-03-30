@@ -128,16 +128,20 @@ export default {
 
       setTimeout(() => {
         window.context.phoneInterface.getGpsLocationAsync((e) => {
-          if (e.result) {
+          if (e.result && e.result.location) {
             window.context.researchView.addPositionMarker(
-              e.result.lng,
-              e.result.lat
+              e.result.location.longitude,
+              e.result.location.latitude
             );
             window.context.researchView.searchVelibStations(
-              e.result.lng,
-              e.result.lat
+              e.result.location.longitude,
+              e.result.location.latitude
             );
-          } else window.context.researchView.hideLoadingWindow();
+          }
+          else if(e.result && e.result.exception)
+            window.context.phoneInterface.showToastMessage(e.result.exception);
+          
+          window.context.researchView.hideLoadingWindow();
         });
       }, 1000);
     },
