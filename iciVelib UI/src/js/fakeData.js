@@ -360,6 +360,7 @@ export const FakeData = {
         return this.favoriteStations.map(s => {
            let velibDto = this.velibDataToVelibDto(this.velibStations.find(v => v.fields.stationcode === s.id));
            velibDto.customLabel = s.customLabel;
+           velibDto.distance = null;
            return velibDto;
         });
     },
