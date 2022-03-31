@@ -13,7 +13,7 @@ using Android.Runtime;
 using XamarinCustomHelper.Activities;
 using XamarinCustomHelper.Phone.Location;
 using XamarinCustomHelper.Javascript;
-using IciVelib.JavasciptInterfaces;
+using IciVelib.JavascriptInterfaces;
 
 namespace IciVelib
 {
