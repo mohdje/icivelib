@@ -128,6 +128,7 @@ export default {
 
       setTimeout(() => {
         window.context.phoneInterface.getGpsLocationAsync((e) => {
+          window.context.researchView.hideLoadingWindow();
           if (e.result && e.result.location) {
             window.context.researchView.addPositionMarker(
               e.result.location.longitude,
@@ -140,8 +141,6 @@ export default {
           }
           else if(e.result && e.result.exception)
             window.context.phoneInterface.showToastMessage(e.result.exception);
-          
-          window.context.researchView.hideLoadingWindow();
         });
       }, 1000);
     },
