@@ -9,11 +9,25 @@ if "%2"=="r" (
     if "%1"=="s" (npm run serve)
 )
 
-if "%2"=="all" (
+if "%2"=="a" (   
+    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\src\main.js" 1 "import Activity from '@/activities/AdVideoActivity.vue';"
+    if "%1"=="b" (
+        npm run build
+        robocopy /s "D:\Projets\IciVelib\development\iciVelib UI\dist" "D:\Projets\IciVelib\development\mobile app\IciVelib\Assets\UI\adVideoActivity"
+    )
+    if "%1"=="s" (npm run serve)
+)
+
+if "%1"=="all" (
     echo Build ResearchActivity
     "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\src\main.js" 1 "import Activity from '@/activities/ResearchActivity.vue';"
     npm run build
     robocopy /s "D:\Projets\IciVelib\development\iciVelib UI\dist" "D:\Projets\IciVelib\development\mobile app\IciVelib\Assets\UI\researchActivity"
+
+    echo Build AdVideoActivity
+    "D:\Projets\ReplaceLine\ReplaceLine\bin\Release\net6.0\ReplaceLine.exe" ".\src\main.js" 1 "import Activity from '@/activities/AdVideoActivity.vue';"
+    npm run build
+    robocopy /s "D:\Projets\IciVelib\development\iciVelib UI\dist" "D:\Projets\IciVelib\development\mobile app\IciVelib\Assets\UI\adVideoActivity"
 
     echo Build All finished
 )
