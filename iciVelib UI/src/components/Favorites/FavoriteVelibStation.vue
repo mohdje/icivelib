@@ -5,6 +5,7 @@
     v-touch-start="handleTouchStart"
     v-touch-move="handleTouchMove"
     v-touch-end="handleTouchEnd"
+    ripple
   >
     <div
       class="swipe-btn delete-favorite"
