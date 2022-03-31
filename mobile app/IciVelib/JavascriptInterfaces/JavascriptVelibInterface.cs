@@ -10,10 +10,10 @@ using Android.App;
 using System;
 using System.Threading.Tasks;
 using XamarinCustomHelper.Javascript;
-using XamarinCustomHelper.Activities;
 using XamarinCustomHelper.IO;
+using IciVelib.Activities;
 
-namespace IciVelib.JavasciptInterfaces
+namespace IciVelib.JavascriptInterfaces
 {
     public class JavascriptVelibInterface : JavascriptWebViewInterface
     {
@@ -117,7 +117,7 @@ namespace IciVelib.JavasciptInterfaces
 
                 try
                 {
-                    velibFavStationList.Remove(v=> v.Id == id);
+                    velibFavStationList.Remove(v => v.Id == id);
                     Context.RunOnUiThread(() => jSIPhone.ShowToastMessage("La station " + id + " a bien été supprimée de vos stations favorites"));
                 }
                 catch (Exception ex)
@@ -150,6 +150,18 @@ namespace IciVelib.JavasciptInterfaces
             Task.WhenAll(velibDataTasks).ContinueWith(t => favStationsWithData.AddRange(t.Result)).Wait();
 
             return favStationsWithData.ToArray();
+        }
+
+        [Export]
+        [JavascriptInterface]
+        public void OpenAdVideoActivity()
+        {
+            XamarinCustomHelper.Activities.ActivitiesTransitionManager.SwitchToActivity(this.Context,
+                typeof(AdVideoActivity), 
+                false, 
+                null, 
+                Resource.Animation.EnterFromRight, 
+                Resource.Animation.abc_fade_out);
         }
     }
 }
