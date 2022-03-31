@@ -26,7 +26,7 @@ export const TestPhoneInterface = {
     FakeData.fakeAsyncCallMobile(callback, FakeData.getFavoriteVelibStations(), 1000);
   },
 
-  updateFavoriteVelibStationAsync(stationId, customLabel, callback){
+  updateFavoriteVelibStationAsync(stationId, customLabel, callback) {
     FakeData.updateFavoriteVelibStationCustomLabel(stationId, customLabel);
     this.showToastMessage("velib station " + stationId + " custom label edited");
     FakeData.fakeAsyncCallMobile(callback, FakeData.getFavoriteVelibStations(), 1000);
@@ -46,6 +46,37 @@ export const TestPhoneInterface = {
 
   showToastMessage(text) {
     console.log("show toast message: ", text);
+  },
+
+  goToPreviousActivity(){
+    console.log("go to previous activity");
+  },
+
+  openAdVideoActivity(){
+    console.log("open ad video activity");
+  },
+
+  loadAdVideo(fail) {
+    console.log("ad video loading");
+    
+   if (fail) {
+      setTimeout(() => {
+        console.log("ad video failed to load");
+        document.dispatchEvent(new CustomEvent('adFailedToLoad'));
+      }, 1000);
+    }
+    else {
+      setTimeout(() => {
+        console.log("ad video playing");
+        setTimeout(() => {
+          console.log("ad video ended");
+          document.dispatchEvent(new CustomEvent('adWatched'));
+        }, 3000);
+      }, 1000);
+    }
+
   }
+
 }
+
 

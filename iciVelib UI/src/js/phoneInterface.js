@@ -36,6 +36,18 @@ const ProdPhoneInterface = {
 
     showToastMessage(text) {
         Phone.ShowToastMessage(text);
+    },
+
+    goToPreviousActivity(){
+        Phone.GoToPreviousActivity();
+    },
+
+    openAdVideoActivity(){
+        Velib.OpenAdVideoActivity();
+    },
+
+    loadAdVideo(){
+        Ad.LoadAdVideo();
     }
 }
 

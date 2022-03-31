@@ -4,6 +4,14 @@
       <v-btn color="primary" fab small v-delay-click="onFilterClick">
         <v-icon>mdi-filter</v-icon>
       </v-btn>
+      <v-btn
+        fab
+        small
+        v-delay-click="showSupportDialog"
+        style="margin-top: 5px"
+      >
+        <v-icon>mdi-thumb-up</v-icon>
+      </v-btn>
     </div>
     <div class="research-input">
       <v-text-field
@@ -43,16 +51,25 @@
         <v-icon>mdi-star</v-icon>
       </v-btn>
     </div>
+    <YesNoDialog
+      :visible="supportDevDialogVisible"
+      :title="'Supporter'"
+      :text="'Afin d\'aider le développeur a maintenir cette application gratuitement, vous pouvez regarder une publicité de quelques secondes de temps en temps. Souhaitez-vous regarder une publicité ?'"
+      @yesClick="openAdVideoActivity"
+      @noClick="supportDevDialogVisible = false"
+    />
   </div>
 </template>
 <script>
 import { Geocoding } from "@/js/geocoding.js";
 import ResearchList from "@/components/Research/ResearchList";
+import YesNoDialog from "@/components/Dialogs/YesNoDialog.vue";
 
 export default {
   name: "ResearchHeader",
   components: {
     ResearchList,
+    YesNoDialog,
   },
   props: {
     showFavoritesButton: Boolean,
@@ -61,6 +78,7 @@ export default {
     return {
       researchResults: [],
       locationSelected: "",
+      supportDevDialogVisible: false,
     };
   },
   methods: {
@@ -86,6 +104,13 @@ export default {
       this.researchResults = [];
       this.$emit("locationSelected", location.coordinates);
     },
+    openAdVideoActivity() {
+      this.supportDevDialogVisible = false;
+      window.context.phoneInterface.openAdVideoActivity();
+    },
+    showSupportDialog(){
+      this.supportDevDialogVisible = true;
+    }
   },
 };
 </script>
