@@ -32,7 +32,7 @@ namespace IciVelib.Activities
 
             startupWork.ContinueWith(t =>
             {
-                StartActivity(new Intent(Application.Context, typeof(ResearchActivity)));
+                XamarinCustomHelper.Activities.ActivitiesTransitionManager.SwitchToActivity(this, typeof(ResearchActivity), true, null, Resource.Animation.abc_fade_in, Resource.Animation.abc_fade_out);             
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             startupWork.Start();
