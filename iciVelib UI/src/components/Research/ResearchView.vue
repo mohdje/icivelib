@@ -44,6 +44,7 @@ import LoadingWindow from "@/components/Research/LoadingWindow";
 import ResearchResultLabel from "@/components/Research/ResearchResultLabel";
 import VelibStationInfosWindow from "@/components/VelibStationInfosWindow/VelibStationInfosWindow";
 import FavoritesPannel from "@/components/Favorites/FavoritesPannel";
+import { MapMarker } from "@/js/mapMarker.js";
 
 export default {
   name: "ResearchView",
@@ -61,7 +62,7 @@ export default {
   },
   mounted() {
     window.context.researchView = this;
-
+    window.context.mapMarker = MapMarker;
     window.context.favoriteStationStore.load();
   },
   computed: {
