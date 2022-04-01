@@ -5,7 +5,7 @@
         {{ title }}
       </v-card-title>
       <v-card-text>
-        {{ text }}
+        <div style="color:black">{{ text }}</div>
       </v-card-text>
       <v-text-field
         v-model="textInput"

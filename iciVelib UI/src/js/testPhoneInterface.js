@@ -52,11 +52,7 @@ export const TestPhoneInterface = {
     console.log("go to previous activity");
   },
 
-  openAdVideoActivity(){
-    console.log("open ad video activity");
-  },
-
-  loadAdVideo(fail) {
+  showAdVideo(fail) {
     console.log("ad video loading");
     
    if (fail) {

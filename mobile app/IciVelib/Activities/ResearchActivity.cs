@@ -22,12 +22,20 @@ namespace IciVelib
     {
         public bool LocationPermissionReady { get; set; }
 
+        private bool readyToPlayAd;
+
+        const string RewardedAdVideoId = "ca-app-pub-3940256099942544/5224354917"; //test id ca-app-pub-3940256099942544/5224354917
+
+
         protected override void OnCreate(Bundle savedInstanceState)
 		{
 			base.OnCreate(savedInstanceState);
           
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);          
+            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+
+            InitAd();
         }
+
         protected override int GetLayoutResource()
         {
             return Resource.Layout.activity_main;
@@ -64,6 +72,50 @@ namespace IciVelib
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             this.LocationPermissionReady = true;
+        }
+
+        private void InitAd()
+        {
+            Android.Gms.Ads.MobileAds.Initialize(this);
+
+            MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdLoaded += (s, e) =>
+            {
+                readyToPlayAd = true;
+            };
+
+            MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdClosed += (s, e) =>
+            {
+                LoadAdVideo();
+                this.DispacthJavaScriptEvent("adWatched", null);
+            };
+
+            MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdFailedToLoad += (s, e) =>
+            {
+                this.DispacthJavaScriptEvent("adFailedToLoad", null);
+            };
+
+            LoadAdVideo();
+        }
+
+        private void LoadAdVideo()
+        {
+            readyToPlayAd = false;
+            this.RunOnUiThread(() =>
+            {
+                MarcTron.Plugin.CrossMTAdmob.Current.LoadRewardedVideo(RewardedAdVideoId);
+            });
+        }
+
+        public void ShowAdVideo()
+        {
+            while (!readyToPlayAd)
+                System.Threading.Tasks.Task.Delay(1000).Wait();
+
+            this.RunOnUiThread(() =>
+            {
+                MarcTron.Plugin.CrossMTAdmob.Current.ShowRewardedVideo();
+            });
+            
         }
     }
 }

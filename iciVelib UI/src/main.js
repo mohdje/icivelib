@@ -1,4 +1,4 @@
-import Activity from '@/activities/AdVideoActivity.vue';
+import Activity from '@/activities/ResearchActivity.vue';
 import Vue from 'vue';
 import vuetify from './plugins/vuetify';
 import { vueDirectives } from "@/js/directives";

@@ -54,8 +54,8 @@
     <YesNoDialog
       :visible="supportDevDialogVisible"
       :title="'Supporter'"
-      :text="'Afin d\'aider le développeur a maintenir cette application gratuitement, vous pouvez regarder une publicité de quelques secondes de temps en temps. Souhaitez-vous regarder une publicité ?'"
-      @yesClick="openAdVideoActivity"
+      :text="'Afin d\'aider le développeur à maintenir cette application gratuitement, vous pouvez regarder une publicité de quelques secondes de temps en temps. Souhaitez-vous regarder une publicité ?'"
+      @yesClick="onAdSupportAgreed"
       @noClick="supportDevDialogVisible = false"
     />
   </div>
@@ -104,9 +104,9 @@ export default {
       this.researchResults = [];
       this.$emit("locationSelected", location.coordinates);
     },
-    openAdVideoActivity() {
+    onAdSupportAgreed() {
       this.supportDevDialogVisible = false;
-      window.context.phoneInterface.openAdVideoActivity();
+      this.$emit("showAd");
     },
     showSupportDialog(){
       this.supportDevDialogVisible = true;

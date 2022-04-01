@@ -42,12 +42,8 @@ const ProdPhoneInterface = {
         Phone.GoToPreviousActivity();
     },
 
-    openAdVideoActivity(){
-        Velib.OpenAdVideoActivity();
-    },
-
-    loadAdVideo(){
-        Ad.LoadAdVideo();
+    showAdVideo(){
+        Velib.ShowAdVideo();
     }
 }
 

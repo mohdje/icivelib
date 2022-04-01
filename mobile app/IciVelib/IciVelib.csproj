@@ -72,10 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\ResearchActivity.cs" />
-    <Compile Include="Activities\AdVideoActivity.cs" />
     <Compile Include="Activities\SplashScreenActivity.cs" />
     <Compile Include="Helpers\VelibRequester.cs" />
-    <Compile Include="JavascriptInterfaces\JavascriptAdInterface.cs" />
     <Compile Include="JavascriptInterfaces\JavascriptVelibInterface.cs" />
     <Compile Include="Models\VelibFavStationList.cs" />
     <Compile Include="Models\VelibStation.cs" />
@@ -89,11 +87,6 @@
     <AndroidAsset Include="Assets\UI\researchActivity\materialsdesignicons\materialdesignicons-webfont.ttf" />
     <AndroidAsset Include="Assets\UI\researchActivity\materialsdesignicons\materialdesignicons-webfont.woff" />
     <AndroidAsset Include="Assets\UI\researchActivity\materialsdesignicons\materialdesignicons-webfont.woff2" />
-    <AndroidAsset Include="Assets\UI\adVideoActivity\materialsdesignicons\materialdesignicons-webfont.eot" />
-    <AndroidAsset Include="Assets\UI\adVideoActivity\materialsdesignicons\materialdesignicons-webfont.ttf" />
-    <AndroidAsset Include="Assets\UI\adVideoActivity\materialsdesignicons\materialdesignicons-webfont.woff" />
-    <AndroidAsset Include="Assets\UI\adVideoActivity\materialsdesignicons\materialdesignicons-webfont.woff2" />
-    <AndroidAsset Include="Assets\UI\adVideoActivity\app.js.map" />
     <None Include="Properties\AndroidManifest.xml">
       <SubType>Designer</SubType>
     </None>
@@ -114,6 +107,9 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Android.Support.Design" Version="28.0.0.3" />
+    <PackageReference Include="Xamarin.AndroidX.RecyclerView">
+      <Version>1.2.1.3</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Essentials">
       <Version>1.3.1</Version>
     </PackageReference>
@@ -155,21 +151,6 @@
     <AndroidAsset Include="Assets\UI\researchActivity\materialsdesignicons\materialdesignicons.min.css" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <AndroidAsset Include="Assets\UI\adVideoActivity\fonts\font-roboto.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\UI\adVideoActivity\materialsdesignicons\materialdesignicons.min.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\UI\adVideoActivity\app.css" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\UI\adVideoActivity\app.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\UI\adVideoActivity\index.html" />
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 		Other similar extension points exist, see Microsoft.Common.targets.

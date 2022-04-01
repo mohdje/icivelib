@@ -28,6 +28,7 @@ namespace IciVelib.Activities
 
             Task startupWork = new Task(() =>
             {
+              
             });
 
             startupWork.ContinueWith(t =>

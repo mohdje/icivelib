@@ -11,6 +11,7 @@
       @locationSelected="onLocationSelected"
       @geolocationClick="onGeolocationClick"
       @favoritesClick="showFavoritePannel"
+      @showAd="showAd"
       :showFavoritesButton="hasFavoriteStations"
     />
     <ResearchResultLabel
@@ -34,6 +35,7 @@
       @goToVelibStation="goToSelectedVelibStation"
       @closeClick="onVelibStationsWindowCloseClick"
     />
+    <AdManager ref="adManager"/>
   </div>
 </template>
 <script>
@@ -45,6 +47,8 @@ import ResearchResultLabel from "@/components/Research/ResearchResultLabel";
 import VelibStationInfosWindow from "@/components/VelibStationInfosWindow/VelibStationInfosWindow";
 import FavoritesPannel from "@/components/Favorites/FavoritesPannel";
 import { MapMarker } from "@/js/mapMarker.js";
+import AdManager from '../AdManager/AdManager.vue';
+
 
 export default {
   name: "ResearchView",
@@ -56,6 +60,7 @@ export default {
     ResearchResultLabel,
     VelibStationInfosWindow,
     FavoritesPannel,
+    AdManager
   },
   props: {
     favoriteVelibStations: Array,
@@ -238,6 +243,9 @@ export default {
         this.selectedStation.longitude
       );
     },
+    showAd(){
+      this.$refs.adManager.showAd();
+    }
   },
 };
 </script>

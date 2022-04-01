@@ -5,13 +5,14 @@
         {{ title }}
       </v-card-title>
       <v-card-text>
-        {{ text }}
+        <div style="color: black">{{ text }}</div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-          <v-btn color="secondary" text v-delay-click="onNoClick"> Non </v-btn>
-        <v-btn color="secondary" elevation="0" v-delay-click="onYesClick"> Oui </v-btn>
-      
+        <v-btn color="secondary" text v-delay-click="onNoClick"> Non </v-btn>
+        <v-btn color="secondary" elevation="0" v-delay-click="onYesClick">
+          Oui
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

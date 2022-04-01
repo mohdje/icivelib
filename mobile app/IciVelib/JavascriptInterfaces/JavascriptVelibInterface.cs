@@ -154,14 +154,10 @@ namespace IciVelib.JavascriptInterfaces
 
         [Export]
         [JavascriptInterface]
-        public void OpenAdVideoActivity()
+        public void ShowAdVideo()
         {
-            XamarinCustomHelper.Activities.ActivitiesTransitionManager.SwitchToActivity(this.Context,
-                typeof(AdVideoActivity), 
-                false, 
-                null, 
-                Resource.Animation.EnterFromRight, 
-                Resource.Animation.abc_fade_out);
+            var adActivity = this.Context as ResearchActivity;
+            adActivity.ShowAdVideo();
         }
     }
 }
