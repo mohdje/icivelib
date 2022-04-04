@@ -45,11 +45,19 @@ namespace IciVelib.Helpers
                 if (record != null)
                 {
                     var velibStation = new VelibStation(record.Fields);
-
-                    if (!cache.ContainsKey(velibStation.Id))
-                        cache.Add(velibStation.Id, velibStation);
-                    else
-                        cache[velibStation.Id] = velibStation;
+                    try
+                    {
+                        lock (cache)
+                        {
+                            if (!cache.ContainsKey(velibStation.Id))
+                                cache.Add(velibStation.Id, velibStation);
+                            else
+                                cache[velibStation.Id] = velibStation;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                    }
 
                     return velibStation;
                 }
