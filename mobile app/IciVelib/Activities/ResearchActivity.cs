@@ -24,8 +24,11 @@ namespace IciVelib
 
         private bool readyToPlayAd;
 
-        const string RewardedAdVideoId = "ca-app-pub-3940256099942544/5224354917"; //test id ca-app-pub-3940256099942544/5224354917
+        //test id ca-app-pub-3940256099942544/5224354917 - prod id ca-app-pub-6560577025026684/9414138200
+        const string RewardedAdVideoId = "ca-app-pub-6560577025026684/9414138200";
 
+        // test id ca-app-pub-3940256099942544/1033173712 - prod id ca-app-pub-6560577025026684/4968029685
+        const string InterstitialAdId = "ca-app-pub-6560577025026684/4968029685"; 
 
         protected override void OnCreate(Bundle savedInstanceState)
 		{
@@ -78,21 +81,32 @@ namespace IciVelib
         {
             Android.Gms.Ads.MobileAds.Initialize(this);
 
-            MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdLoaded += (s, e) =>
+            MarcTron.Plugin.CrossMTAdmob.Current.OnInterstitialLoaded += (s, e) =>
             {
                 readyToPlayAd = true;
             };
 
-            MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdClosed += (s, e) =>
+            MarcTron.Plugin.CrossMTAdmob.Current.OnInterstitialClosed += (s, e) =>
             {
                 LoadAdVideo();
                 this.DispacthJavaScriptEvent("adWatched", null);
             };
 
-            MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdFailedToLoad += (s, e) =>
-            {
-                this.DispacthJavaScriptEvent("adFailedToLoad", null);
-            };
+            //MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdLoaded += (s, e) =>
+            //{
+            //    readyToPlayAd = true;
+            //};
+
+            //MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdClosed += (s, e) =>
+            //{
+            //    LoadAdVideo();
+            //    this.DispacthJavaScriptEvent("adWatched", null);
+            //};
+
+            //MarcTron.Plugin.CrossMTAdmob.Current.OnRewardedVideoAdFailedToLoad += (s, e) =>
+            //{
+            //    this.DispacthJavaScriptEvent("adFailedToLoad", null);
+            //};
 
             LoadAdVideo();
         }
@@ -102,7 +116,8 @@ namespace IciVelib
             readyToPlayAd = false;
             this.RunOnUiThread(() =>
             {
-                MarcTron.Plugin.CrossMTAdmob.Current.LoadRewardedVideo(RewardedAdVideoId);
+               // MarcTron.Plugin.CrossMTAdmob.Current.LoadRewardedVideo(RewardedAdVideoId);
+                MarcTron.Plugin.CrossMTAdmob.Current.LoadInterstitial(InterstitialAdId);
             });
         }
 
@@ -113,7 +128,8 @@ namespace IciVelib
 
             this.RunOnUiThread(() =>
             {
-                MarcTron.Plugin.CrossMTAdmob.Current.ShowRewardedVideo();
+                //MarcTron.Plugin.CrossMTAdmob.Current.ShowRewardedVideo();
+                MarcTron.Plugin.CrossMTAdmob.Current.ShowInterstitial();
             });
             
         }

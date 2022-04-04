@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="7" android:versionName="1.3.1" package="com.icivelib.icivelib" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="8" android:versionName="1.3.2" package="com.icivelib.icivelib" android:installLocation="auto">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="30" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -10,6 +10,6 @@
 	<uses-feature android:name="android.hardware.location.network" android:required="false" />
 	<application android:allowBackup="true" android:icon="@mipmap/logo_app_launcher" android:label="@string/app_name" android:roundIcon="@mipmap/logo_app_launcher_round" android:supportsRtl="true" android:theme="@style/AppTheme">
 		<!--test app id ca-app-pub-3940256099942544~3347511713 - prod app id : ca-app-pub-6560577025026684~9058914986-->
-		<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-3940256099942544~3347511713" />
+		<meta-data android:name="com.google.android.gms.ads.APPLICATION_ID" android:value="ca-app-pub-6560577025026684~9058914986" />
 	</application>
 </manifest>
